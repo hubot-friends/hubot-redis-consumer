@@ -48,3 +48,9 @@ See `RedisConsumer_Test.mjs` for a test that demonstrates replying to an inbox m
 
 - `npm start` — Start Hubot with the Redis consumer adapter
 - `npm test` — Run tests
+
+## Run Redis
+
+```sh
+docker run --rm -p 6378:6379 -d --name hubot-redis -v $(pwd)/redis-data:/data redis redis-server --appendonly yes
+```
