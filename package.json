@@ -6,12 +6,18 @@
     "start": "hubot -f ./index.mjs -n jbot",
     "test": "node --test"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Joey Guerra <github@joeyguerra.com>",
+  "license": "MIT",
   "description": "A Redis consumer for Hubot",
   "dependencies": {
     "hubot": "^13.0.1",
     "redis": "^5.8.2"
   },
-  "keywords": []
+  "keywords": [
+    "hubot",
+    "redis",
+    "consumer",
+    "scale",
+    "horizontally"
+  ]
 }
