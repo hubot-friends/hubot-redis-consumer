@@ -1,5 +1,5 @@
 {
-  "name": "hubot-redis-consumer",
+  "name": "@hubot-friends/hubot-redis-consumer",
   "version": "0.0.0-development",
   "main": "index.mjs",
   "scripts": {
@@ -25,5 +25,8 @@
       "main"
     ],
     "dryRun": false
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
