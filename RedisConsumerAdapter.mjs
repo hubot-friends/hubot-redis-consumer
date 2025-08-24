@@ -80,9 +80,7 @@ class RedisConsumerAdapter extends Adapter {
                     message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
                     break
             }
-            if (message) {
-                await this.robot.receive(message)
-            }
+            await this.robot.receive(message)
         }
     }
 
@@ -143,6 +141,7 @@ class RedisConsumerAdapter extends Adapter {
         if (!this.#client) {
             throw new Error('Redis client is not initialized')
         }
+        
         await this.#client.xAdd(this.#options.outboxStreamName, '*', {
             kind: envelope.message.constructor.name,
             method: 'send',
@@ -157,7 +156,7 @@ class RedisConsumerAdapter extends Adapter {
         if (!this.#client) {
             throw new Error('Redis client is not initialized')
         }
-        console.log('envelope', envelope)
+
         await this.#client.xAdd(this.#options.outboxStreamName, '*', {
             kind: envelope.message.constructor.name,
             method: 'reply',
