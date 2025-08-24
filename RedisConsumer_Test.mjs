@@ -56,13 +56,16 @@ await test('Redis Inbox Consumer', async (t) => {
             await sut.run()
 
             await client.xAdd(INBOX_STREAM_NAME, '*', {
-                kind: 'InboxEnvelope',
+                kind: TextMessage.name,
                 recordedAt: new Date().toISOString(),
                 occurredAt: new Date().toISOString(),
-                id: new Date().getTime().toString(),
-                sender: 'user1',
-                room: 'general',
-                body: '@t-bot hey i expect a reply yo'
+                id: Date.now().toString(),
+                envelope: JSON.stringify({
+                    user: 'user1',
+                    room: 'general',
+                    text: '@t-bot hey i expect a reply yo',
+                    message: new TextMessage({user: 'user1', room: 'general' }, '@t-bot hey i expect a reply yo', Date.now())
+                })
             })
 
             await Promise.race([
