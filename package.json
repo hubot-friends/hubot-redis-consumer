@@ -13,6 +13,10 @@
     "hubot": "^13.0.1",
     "redis": "^5.8.2"
   },
+  "files": [
+    "index.mjs",
+    "RedisConsumerAdapter.mjs"
+  ],
   "keywords": [
     "hubot",
     "redis",
