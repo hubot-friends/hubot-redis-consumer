@@ -1,4 +1,4 @@
-import { Adapter, Message, TextMessage } from 'hubot'
+import { Adapter, Message, TextMessage, EnterMessage, LeaveMessage, TopicMessage, CatchAllMessage } from 'hubot'
 
 class AckResultWarning extends Error {
     constructor(ackResult) {
@@ -64,8 +64,17 @@ class RedisConsumerAdapter extends Adapter {
             const envelope = JSON.parse(entry.message.envelope)
             let message = null
             switch(entry.kind) {
-                case TextMessage.name:
-                    message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
+                case EnterMessage.name:
+                    message = new EnterMessage(envelope.message.user)
+                    break
+                case LeaveMessage.name:
+                    message = new LeaveMessage(envelope.message.user)
+                    break
+                case CatchAllMessage.name:
+                    message = new CatchAllMessage(envelope.message)
+                    break
+                case TopicMessage.name:
+                    message = new TopicMessage(envelope.message.user, envelope.message.text, envelope.message.id)
                     break
                 default:
                     message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
