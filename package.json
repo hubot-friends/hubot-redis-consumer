@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.mjs",
   "scripts": {
-    "start": "hubot -f ./index.mjs",
+    "start": "hubot -f ./index.mjs -n jbot",
     "test": "node --test"
   },
   "author": "",

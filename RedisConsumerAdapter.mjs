@@ -80,6 +80,7 @@ class RedisConsumerAdapter extends Adapter {
                     message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
                     break
             }
+            message.adapter = entry.message.adapter
             await this.robot.receive(message)
         }
     }
@@ -141,7 +142,7 @@ class RedisConsumerAdapter extends Adapter {
         if (!this.#client) {
             throw new Error('Redis client is not initialized')
         }
-        
+
         await this.#client.xAdd(this.#options.outboxStreamName, '*', {
             kind: envelope.message.constructor.name,
             method: 'send',
@@ -149,7 +150,9 @@ class RedisConsumerAdapter extends Adapter {
             occurredAt: new Date().toISOString(),
             id: Date.now().toString(),
             envelope: JSON.stringify(envelope),
-            strings: strings.join(' ')
+            strings: strings.join(' '),
+            consumerName: this.#options.consumerName,
+            adapter: envelope.message.adapter
         })
     }
     async reply(envelope, ...strings) {
@@ -164,7 +167,9 @@ class RedisConsumerAdapter extends Adapter {
             occurredAt: new Date().toISOString(),
             id: Date.now().toString(),
             envelope: JSON.stringify(envelope),
-            strings: strings.join(' ')
+            strings: strings.join(' '),
+            consumerName: this.#options.consumerName,
+            adapter: envelope.message.adapter
         })
         this.emit('reply', envelope, ...strings)
     }
