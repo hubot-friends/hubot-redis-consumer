@@ -131,3 +131,4 @@ dist
 redis-data
 appendonlydir
 external-scripts.json
+package-lock.json
