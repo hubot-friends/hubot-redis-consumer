@@ -31,7 +31,16 @@ export default {
 
         process.on('SIGINT', cleanup)
         process.on('SIGTERM', cleanup)
-        process.on('uncaughtException', cleanup)
+        process.on('uncaughtException', async err => {
+            console.error('Uncaught exception:', err)
+            try {
+                await client.close()
+                await consumer.close()
+            } catch (err) {
+                // ignore errors on close
+            }
+            process.exit(1)
+        })
 
         return consumer
     }

@@ -1,4 +1,4 @@
-import { Adapter, TextMessage } from 'hubot'
+import { Adapter, Message, TextMessage } from 'hubot'
 
 class AckResultWarning extends Error {
     constructor(ackResult) {
@@ -11,6 +11,12 @@ class CreateGroupError extends Error {
     constructor(cause) {
         super(`Failed to create consumer group: ${cause}`)
         this.name = 'CreateGroupError'
+    }
+}
+
+class Incoming {
+    constructor() {
+
     }
 }
 
@@ -52,6 +58,25 @@ class RedisConsumerAdapter extends Adapter {
 
         return response
     }
+
+    async inbox(entries){
+        for await (const entry of entries) {            
+            const envelope = JSON.parse(entry.message.envelope)
+            let message = null
+            switch(entry.kind) {
+                case TextMessage.name:
+                    message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
+                    break
+                default:
+                    message = new TextMessage(envelope.message.user, envelope.message.text, envelope.message.id)
+                    break
+            }
+            if (message) {
+                await this.robot.receive(message)
+            }
+        }
+    }
+
     async #tryToCreateGroup(key, groupName, startFrom) {
         try {
             return await this.#client.xGroupCreate(key, groupName, startFrom, { MKSTREAM: true })
@@ -104,42 +129,34 @@ class RedisConsumerAdapter extends Adapter {
             }
         }
     }
-    async inbox(entries){
-        for await (const entry of entries) {
-            const { sender, room, body, id } = entry.message
-            const textMessage = new TextMessage({user: sender, room}, body, id)
-            await this.robot.receive(textMessage)
-        }
-    }
 
     async send(envelope, ...strings) {
         if (!this.#client) {
             throw new Error('Redis client is not initialized')
         }
-        
         await this.#client.xAdd(this.#options.outboxStreamName, '*', {
-            kind: 'send',
+            kind: envelope.message.constructor.name,
+            method: 'send',
             recordedAt: new Date().toISOString(),
             occurredAt: new Date().toISOString(),
-            id: new Date().getTime().toString(),
-            sender: envelope.user.user,
-            room: envelope.room,
-            body: strings.join(' ')
+            id: Date.now().toString(),
+            envelope: JSON.stringify(envelope),
+            strings: strings.join(' ')
         })
     }
     async reply(envelope, ...strings) {
         if (!this.#client) {
             throw new Error('Redis client is not initialized')
         }
-
+        console.log('envelope', envelope)
         await this.#client.xAdd(this.#options.outboxStreamName, '*', {
-            kind: 'reply',
+            kind: envelope.message.constructor.name,
+            method: 'reply',
             recordedAt: new Date().toISOString(),
             occurredAt: new Date().toISOString(),
-            id: new Date().getTime().toString(),
-            sender: envelope.user.user,
-            room: envelope.room,
-            body: strings.join(' ')
+            id: Date.now().toString(),
+            envelope: JSON.stringify(envelope),
+            strings: strings.join(' ')
         })
         this.emit('reply', envelope, ...strings)
     }

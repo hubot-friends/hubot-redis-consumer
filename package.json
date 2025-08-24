@@ -1,7 +1,7 @@
 {
   "name": "hubot-redis-consumer",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "start": "hubot -f ./index.mjs",
     "test": "node --test"
