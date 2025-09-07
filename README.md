@@ -3,6 +3,8 @@
 
 A Redis consumer adapter for Hubot, designed for scalable, distributed chat automation using Redis streams and consumer groups.
 
+You'll need the [hubot-redis-inbox](https://github.com/hubot-friends/hubot-redis-inbox) Hubot script in the Hubot instance that is connected to your chat provider.
+
 ![Architecture](image-1.png)
 
 ## Features
