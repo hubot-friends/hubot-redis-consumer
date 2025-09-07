@@ -132,3 +132,4 @@ redis-data
 appendonlydir
 external-scripts.json
 package-lock.json
+.DS_Store
